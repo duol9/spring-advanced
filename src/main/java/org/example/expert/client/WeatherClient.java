@@ -24,7 +24,7 @@ public class WeatherClient {
 
     public String getTodayWeather() {
         ResponseEntity<WeatherDto[]> responseEntity =
-                restTemplate.getForEntity(buildWeatherApiUri(), WeatherDto[].class);
+            restTemplate.getForEntity(buildWeatherApiUri(), WeatherDto[].class);
 
         WeatherDto[] weatherArray = responseEntity.getBody();
         if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
@@ -48,11 +48,11 @@ public class WeatherClient {
 
     private URI buildWeatherApiUri() {
         return UriComponentsBuilder
-                .fromUriString("https://f-api.github.io")
-                .path("/f-api/weather.json")
-                .encode()
-                .build()
-                .toUri();
+            .fromUriString("https://f-api.github.io")
+            .path("/f-api/weather.json")
+            .encode()
+            .build()
+            .toUri();
     }
 
     private String getCurrentDate() {

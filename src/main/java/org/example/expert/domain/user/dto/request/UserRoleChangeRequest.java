@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserRoleChangeRequest {
 
-    private String role;
+	private String role;
 }

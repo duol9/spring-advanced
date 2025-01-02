@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CommentSaveRequest {
 
-    @NotBlank
-    private String contents;
+	@NotBlank
+	private String contents;
 }

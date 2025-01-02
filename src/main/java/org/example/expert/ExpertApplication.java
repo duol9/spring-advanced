@@ -10,8 +10,8 @@ import static org.springframework.data.web.config.EnableSpringDataWebSupport.Pag
 @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)
 public class ExpertApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(ExpertApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(ExpertApplication.class, args);
+	}
 
 }
