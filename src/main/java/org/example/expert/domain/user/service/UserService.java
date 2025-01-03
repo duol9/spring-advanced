@@ -20,20 +20,13 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 
 	public UserResponse getUser(long userId) {
-		User user = userRepository.findById(userId).orElseThrow(() -> new InvalidRequestException("User not found"));
+		User user = findUserOrThrow(userId);
 		return new UserResponse(user.getId(), user.getEmail());
 	}
 
 	@Transactional
 	public void changePassword(long userId, UserChangePasswordRequest userChangePasswordRequest) {
-		if (userChangePasswordRequest.getNewPassword().length() < 8 ||
-			!userChangePasswordRequest.getNewPassword().matches(".*\\d.*") ||
-			!userChangePasswordRequest.getNewPassword().matches(".*[A-Z].*")) {
-			throw new InvalidRequestException("새 비밀번호는 8자 이상이어야 하고, 숫자와 대문자를 포함해야 합니다.");
-		}
-
-		User user = userRepository.findById(userId)
-			.orElseThrow(() -> new InvalidRequestException("User not found"));
+		User user = findUserOrThrow(userId);
 
 		if (passwordEncoder.matches(userChangePasswordRequest.getNewPassword(), user.getPassword())) {
 			throw new InvalidRequestException("새 비밀번호는 기존 비밀번호와 같을 수 없습니다.");
@@ -44,5 +37,10 @@ public class UserService {
 		}
 
 		user.changePassword(passwordEncoder.encode(userChangePasswordRequest.getNewPassword()));
+	}
+
+	public User findUserOrThrow(long userId) {
+		return userRepository.findById(userId)
+			.orElseThrow(() -> new InvalidRequestException("User not found"));
 	}
 }
