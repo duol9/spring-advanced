@@ -33,7 +33,7 @@ public class ManagerController {
 	}
 
 	@GetMapping("/todos/{todoId}/managers")
-	public ResponseEntity<List<ManagerResponse>> getMembers(@PathVariable long todoId) {
+	public ResponseEntity<List<ManagerResponse>> getManagers(@PathVariable long todoId) {
 		return ResponseEntity.ok(managerService.getManagers(todoId));
 	}
 
