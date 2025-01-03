@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -66,8 +67,7 @@ public class TodoService {
 	}
 
 	public TodoResponse getTodo(long todoId) {
-		Todo todo = todoRepository.findById(todoId)
-			.orElseThrow(() -> new InvalidRequestException("Todo not found"));
+		Todo todo = findTodoOrThrow(todoId);
 
 		User user = todo.getUser();
 
@@ -80,5 +80,16 @@ public class TodoService {
 			todo.getCreatedAt(),
 			todo.getModifiedAt()
 		);
+	}
+
+	public Todo findTodoOrThrow(long todoId) {
+		return todoRepository.findById(todoId)
+			.orElseThrow(() -> new InvalidRequestException("Todo not found"));
+	}
+
+	public void validateTodoOwner(User user, Todo todo) {
+		if (todo.getUser() == null || !ObjectUtils.nullSafeEquals(user.getId(), todo.getUser().getId())) {
+			throw new InvalidRequestException("해당 일정을 만든 유저가 유효하지 않습니다.");
+		}
 	}
 }
