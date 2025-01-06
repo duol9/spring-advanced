@@ -5,9 +5,9 @@ import org.example.expert.domain.comment.dto.response.CommentSaveResponse;
 import org.example.expert.domain.comment.entity.Comment;
 import org.example.expert.domain.comment.repository.CommentRepository;
 import org.example.expert.domain.common.dto.AuthUser;
-import org.example.expert.domain.common.exception.ServerException;
+import org.example.expert.domain.common.exception.InvalidRequestException;
 import org.example.expert.domain.todo.entity.Todo;
-import org.example.expert.domain.todo.repository.TodoRepository;
+import org.example.expert.domain.todo.service.TodoService;
 import org.example.expert.domain.user.entity.User;
 import org.example.expert.domain.user.enums.UserRole;
 import org.junit.jupiter.api.Test;
@@ -15,8 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,7 +27,7 @@ class CommentServiceTest {
     @Mock
     private CommentRepository commentRepository;
     @Mock
-    private TodoRepository todoRepository;
+    private TodoService todoService;
     @InjectMocks
     private CommentService commentService;
 
@@ -40,10 +38,10 @@ class CommentServiceTest {
         CommentSaveRequest request = new CommentSaveRequest("contents");
         AuthUser authUser = new AuthUser(1L, "email", UserRole.USER);
 
-        given(todoRepository.findById(anyLong())).willReturn(Optional.empty());
+        given(todoService.findTodoOrThrow(anyLong())).willThrow(new InvalidRequestException("Todo not found"));
 
         // when
-        ServerException exception = assertThrows(ServerException.class, () -> {
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
             commentService.saveComment(authUser, todoId, request);
         });
 
@@ -61,7 +59,7 @@ class CommentServiceTest {
         Todo todo = new Todo("title", "title", "contents", user);
         Comment comment = new Comment(request.getContents(), user, todo);
 
-        given(todoRepository.findById(anyLong())).willReturn(Optional.of(todo));
+        given(todoService.findTodoOrThrow(anyLong())).willReturn(todo);
         given(commentRepository.save(any())).willReturn(comment);
 
         // when
