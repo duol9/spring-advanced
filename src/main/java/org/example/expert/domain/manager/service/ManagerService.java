@@ -37,8 +37,11 @@ public class ManagerService {
 		User user = User.fromAuthUser(authUser);
 		Todo todo = todoService.findTodoOrThrow(todoId);
 
+		if (todo.getUser() == null || !ObjectUtils.nullSafeEquals(user.getId(), todo.getUser().getId())) {
+			throw new InvalidRequestException("해당 일정을 만든 유저가 유효하지 않습니다.");
+		}
 		// 작성자 검증
-		todoService.validateTodoOwner(user,todo);
+		//todoService.validateTodoOwner(user,todo);
 
 		// 담당자로 지정된 유저 조회 후 검증
 		User managerUser = userService.findUserOrThrow(managerSaveRequest.getManagerUserId());
